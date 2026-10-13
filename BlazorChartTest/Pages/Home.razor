@@ -1,7 +1,58 @@
-﻿@page "/"
+﻿@using Blazorise.Charts.Svg
+@page "/"
 
 <PageTitle>Home</PageTitle>
 
-<h1>Hello, world!</h1>
+<h1>Chart</h1>
 
-Welcome to your new app.
+<SvgScatterChart TItem="StorePerformance"
+                 Items="@stores"
+                 Options="@options">
+    <SvgChartTitle Title='@("Store performance")' Subtitle='@("Independent X/Y values")' />
+    <SvgChartTooltip Enabled />
+    <SvgChartTimeAxis Id="time"
+                      TimeValue="@(item => item.Sales)"
+                      Culture="nl-NL"
+                      TimeZone="TimeZoneInfo.Local"
+                      Scale="SvgChartTimeScale.Continuous"
+                      Unit="SvgChartTimeUnit.Hour"
+                      LabelsOptions="@(new SvgChartAxisLabelsOptions(){AutoSkip= true})" />
+    <SvgChartValueAxis BeginAtZero TickCount="6" />
+
+    <SvgScatterSeries Name="Stores" CategoryAxisId="time" Value="@( item => item.Margin)" Color="Color.Primary" MarkerRadius="1" />
+</SvgScatterChart>
+
+@code {
+    private readonly SvgChartOptions options = new()
+    {
+        Height = 360,
+        YAxis = new() { BeginAtZero = true, TickCount = 6 },
+    };
+    private static DateTime startDateTime = new DateTime(2026, 8, 13, 10, 15, 0);
+    private readonly List<StorePerformance> stores =
+    [
+        new() { Sales = startDateTime, Margin = 42 },
+        new() { Sales = startDateTime.AddMinutes(1*33), Margin = 64 },
+        new() { Sales = startDateTime.AddMinutes(2*33), Margin = 58 },
+        new() { Sales = startDateTime.AddMinutes(3*33), Margin = 91 },
+        new() { Sales = startDateTime.AddMinutes(4*33), Margin = 76 },
+        new() { Sales = startDateTime.AddMinutes(5*33), Margin = 112 },
+        new() { Sales = startDateTime.AddMinutes(6*33), Margin = 98 },
+        new() { Sales = startDateTime.AddMinutes(7*33), Margin = 120 },
+        new() { Sales = startDateTime.AddMinutes(8*33), Margin = 130 },
+        new() { Sales = startDateTime.AddMinutes(9*33), Margin = 140 },
+        new() { Sales = startDateTime.AddMinutes(10*33), Margin = 150 },
+        new() { Sales = startDateTime.AddMinutes(11*33), Margin = 160 },
+        new() { Sales = startDateTime.AddMinutes(12*33), Margin = 170 },
+        new() { Sales = startDateTime.AddMinutes(13*33), Margin = 380 },
+        new() { Sales = startDateTime.AddMinutes(14*33), Margin = 90 },
+        new() { Sales = startDateTime.AddMinutes(15*33), Margin = 20 },
+    ];
+
+    private sealed class StorePerformance
+    {
+        public DateTime Sales { get; set; }
+
+        public double Margin { get; set; }
+    }
+}
